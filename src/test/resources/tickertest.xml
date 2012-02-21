@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/osgi  http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
+		<!-- Route periodically sent events into the NMR -->
+		<route>
+			<from
+				uri="timer://myTimer?fixedRate=true&amp;period=5000&amp;exchangePattern=InOut" />
+			<setBody>
+				<simple><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+				<soap:Body><ns2:doSomethingOneWay xmlns:ns2="http://impl.services.smx.platform.sayservice.it/">
+				<arg0>John Doe</arg0></ns2:doSomethingOneWay></soap:Body></soap:Envelope>]]></simple>
+			</setBody>
+			<to uri="http://localhost:8181/cxf/testmessageservice" />
+		</route>
+	</camel:camelContext>
+</beans>
