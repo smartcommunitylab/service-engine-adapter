@@ -1,4 +1,4 @@
-package it.sayservice.platform.smx.converter;
+package eu.trentorise.smartcampus.smx.converter;
 
 import java.io.ByteArrayOutputStream;
 
