@@ -41,7 +41,7 @@
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="jms:queue:ServiceDataChangeNotifyQueue" />
-			<to uri="activemq:queue:sb/ServiceDataChangeNotifyQueue" />
+			<to uri="activemq:queue:sb/ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
@@ -64,52 +64,52 @@
 	<!-- DomainBundleTermination -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:DomainBundleTerminationQueue" />
-			<to uri="activemq:queue:sb/DomainBundleTerminationQueue" />
+			<from uri="jms:queue:DomainObjectUpdateQueue" />
+			<to uri="activemq:queue:sb/DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
 	<!-- ProcessDoOperation -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ProcessDoOperationQueue" />
-			<to uri="jms:queue:ProcessDoOperationQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:sb/DoOperationQueue" />
+			<to uri="jms:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 
 	<!-- ProcessDoOperationSynch -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ProcessDoOperationSynchQueue" />
-			<to uri="jms:queue:ProcessDoOperationSynchQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:sb/DoOperationSyncQueue" />
+			<to uri="jms:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
 	<!-- ProcessDoSearch -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ProcessDoSearchQueue" />
-			<to uri="jms:queue:ProcessDoSearchQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:sb/DoSearchQueue" />
+			<to uri="jms:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
 	<!-- ProcessDoDataRequest -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:ProcessDoDataRequestQueue" />
-			<to uri="activemq:queue:sb/ProcessDoDataRequestQueue" />
+			<from uri="jms:queue:DoDataRequestQueue" />
+			<to uri="activemq:queue:sb/DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 
 	<!-- ProcessDoSignal -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ProcessDoSignalQueue" />
-			<to uri="jms:queue:ProcessDoSignalQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:sb/DoSignalQueue" />
+			<to uri="jms:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
-	<bean id="messageConverter" class="it.sayservice.platform.smx.converter.SBOMessageConverter" />
+	<bean id="messageConverter" class="eu.trentorise.smartcampus.smx.converter.SBOMessageConverter" />
 
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
 		<property name="connectionFactory">
