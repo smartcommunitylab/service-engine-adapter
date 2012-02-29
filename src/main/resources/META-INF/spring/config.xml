@@ -40,7 +40,7 @@
 	<!-- ServiceDataChangeNotify -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:ServiceDataChangeNotifyQueue" />
+			<from uri="jms:queue:ServiceDataChangeNotifyQueue?selector=subscriberId&lt;&gt;'it.sayservice.domain_changes'" />
 			<to uri="activemq:queue:sb/ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -61,7 +61,7 @@
 		</route>
 	</camel:camelContext>
 	
-	<!-- DomainBundleTermination -->
+	<!-- DomainObjectUpdate -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="jms:queue:DomainObjectUpdateQueue" />
@@ -69,7 +69,7 @@
 		</route>
 	</camel:camelContext>
 	
-	<!-- ProcessDoOperation -->
+	<!-- DoOperation -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="activemq:queue:sb/DoOperationQueue" />
