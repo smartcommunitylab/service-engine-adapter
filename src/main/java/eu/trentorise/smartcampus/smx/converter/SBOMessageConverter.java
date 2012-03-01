@@ -24,14 +24,14 @@ public class SBOMessageConverter implements MessageConverter {
 				StreamMessage msg = (StreamMessage) object;
 				StreamMessage streamMessage = session.createStreamMessage();
 				securityToken = msg.getStringProperty("securityToken");
-				byte[] bytes = extractByteArrayFromStreamMessage(msg);
+				byte[] bytes = extractByteArrayFromMessage(msg);
 				streamMessage.writeBytes(bytes);
 				message = streamMessage;
 			} else if (object instanceof BytesMessage) {
 				BytesMessage msg = (BytesMessage) object;
 				BytesMessage bytesMessage = session.createBytesMessage();
 				securityToken = msg.getStringProperty("securityToken");
-				byte[] bytes = extractByteArrayFromBytesMessage(msg);
+				byte[] bytes = extractByteArrayFromMessage(msg);
 				bytesMessage.writeBytes(bytes);
 				message = bytesMessage;
 			} else if (object instanceof ObjectMessage) {
@@ -57,9 +57,9 @@ public class SBOMessageConverter implements MessageConverter {
 		Object contentObject = null;
 		try {
 			if (message instanceof StreamMessage) {
-				contentObject = extractByteArrayFromStreamMessage((StreamMessage) message);
+				contentObject = extractByteArrayFromMessage(message);
 			} else if (message instanceof BytesMessage) {
-				contentObject = extractByteArrayFromBytesMessage((BytesMessage) message);
+				contentObject = extractByteArrayFromMessage(message);
 			} else if (message instanceof ObjectMessage) {
 				contentObject = ((ObjectMessage) message).getObject();
 			} else {
@@ -70,27 +70,28 @@ public class SBOMessageConverter implements MessageConverter {
 		}
 		return contentObject;
 	}
-
-	public byte[] extractByteArrayFromStreamMessage(StreamMessage message) throws JMSException {
-		int BUFFER_SIZE = 4096; // (int)message.getBodyLength() + 1;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
-		byte[] buffer = new byte[BUFFER_SIZE];
-		int bufferCount = -1;
-		while ((bufferCount = message.readBytes(buffer)) >= 0) {
-			baos.write(buffer, 0, bufferCount);
-			if (bufferCount < BUFFER_SIZE) {
-				break;
+	
+	private static int readBytes(byte[] buffer, Message message)  {
+		try {
+			if (message instanceof BytesMessage) {
+				return ((BytesMessage) message).readBytes(buffer);
 			}
+			if (message instanceof StreamMessage) {
+				return ((StreamMessage) message).readBytes(buffer);
+			}
+			return -1;
+		} catch (Exception e) {
+			return -1;
 		}
-		return baos.toByteArray();
 	}
 
-	public byte[] extractByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
+
+	public byte[] extractByteArrayFromMessage(Message message) throws JMSException {
 		int BUFFER_SIZE = 4096; // (int)message.getBodyLength() + 1;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
 		byte[] buffer = new byte[BUFFER_SIZE];
 		int bufferCount = -1;
-		while ((bufferCount = message.readBytes(buffer)) >= 0) {
+		while ((bufferCount = readBytes(buffer, message)) >= 0) {
 			baos.write(buffer, 0, bufferCount);
 			if (bufferCount < BUFFER_SIZE) {
 				break;

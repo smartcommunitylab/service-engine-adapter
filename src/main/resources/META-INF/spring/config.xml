@@ -130,8 +130,25 @@
 		</property>
 	</bean>
 
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${activeMQ.brokerURL}" />
+    </bean>
+
+    <bean id="amqPooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8" />
+        <property name="maximumActive" value="500" />
+        <property name="connectionFactory" ref="amqConnectionFactory" />
+    </bean>
+
+
+    <bean id="amqConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="amqPooledConnectionFactory"/>
+        <property name="transacted" value="false"/>
+        <property name="concurrentConsumers" value="10"/>
+    </bean>
+
 	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="brokerURL" value="${activeMQ.brokerURL}" />
+		<property name="configuration" ref="amqConfig"/>
 	</bean>
 
 	<osgix:cm-properties id="preProps" persistent-id="serviceengine.adapter.properties">
