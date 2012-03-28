@@ -16,7 +16,7 @@
 	<!-- ServiceActionInvoke -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ServiceActionInvokeQueue" />
+			<from uri="activemq:queue:ServiceActionInvokeQueue" />
 			<to uri="jms:queue:ServiceActionInvokeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -24,7 +24,7 @@
 	<!-- ServiceDataChangeSubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ServiceDataChangeSubscribeQueue" />
+			<from uri="activemq:queue:ServiceDataChangeSubscribeQueue" />
 			<to uri="jms:queue:ServiceDataChangeSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -32,7 +32,7 @@
 	<!-- ServiceDataChangeUnsubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/ServiceDataChangeUnsubscribeQueue" />
+			<from uri="activemq:queue:ServiceDataChangeUnsubscribeQueue" />
 			<to uri="jms:queue:ServiceDataChangeUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -41,14 +41,14 @@
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="jms:queue:ServiceDataChangeNotifyQueue?selector=subscriberId&lt;&gt;'it.sayservice.domain_changes'" />
-			<to uri="activemq:queue:sb/ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<to uri="activemq:queue:ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
 	<!-- DomainObjectEventSubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DomainObjectEventSubscribeQueue" />
+			<from uri="activemq:queue:DomainObjectEventSubscribeQueue" />
 			<to uri="jms:queue:DomainObjectEventSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -56,7 +56,7 @@
 	<!-- DomainObjectEventUnsubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DomainObjectEventUnsubscribeQueue" />
+			<from uri="activemq:queue:DomainObjectEventUnsubscribeQueue" />
 			<to uri="jms:queue:DomainObjectEventUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -65,14 +65,14 @@
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="jms:queue:DomainObjectUpdateQueue" />
-			<to uri="activemq:queue:sb/DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<to uri="activemq:queue:DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 	
 	<!-- DoOperation -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DoOperationQueue" />
+			<from uri="activemq:queue:DoOperationQueue" />
 			<to uri="jms:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -80,7 +80,7 @@
 	<!-- ProcessDoOperationSynch -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DoOperationSyncQueue" />
+			<from uri="activemq:queue:DoOperationSyncQueue" />
 			<to uri="jms:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -88,7 +88,7 @@
 	<!-- ProcessDoSearch -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DoSearchQueue" />
+			<from uri="activemq:queue:DoSearchQueue" />
 			<to uri="jms:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
@@ -97,14 +97,14 @@
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="jms:queue:DoDataRequestQueue" />
-			<to uri="activemq:queue:sb/DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<to uri="activemq:queue:DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
 
 	<!-- ProcessDoSignal -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:sb/DoSignalQueue" />
+			<from uri="activemq:queue:DoSignalQueue" />
 			<to uri="jms:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
 		</route>
 	</camel:camelContext>
