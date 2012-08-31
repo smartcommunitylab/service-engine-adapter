@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/context
@@ -16,100 +17,142 @@
 	<!-- ServiceActionInvoke -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:ServiceActionInvokeQueue" />
-			<to uri="jms:queue:ServiceActionInvokeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:ServiceActionInvokeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeServiceInvokeMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:ServiceActionInvokeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
-	
+	<bean id="bridgeServiceInvokeMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:ServiceActionInvokeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
 	<!-- ServiceDataChangeSubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:ServiceDataChangeSubscribeQueue" />
-			<to uri="jms:queue:ServiceDataChangeSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:ServiceDataChangeSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeServiceDataChangeSubscribeMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:ServiceDataChangeSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
+	<bean id="bridgeServiceDataChangeSubscribeMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:ServiceDataChangeSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
 
 	<!-- ServiceDataChangeUnsubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:ServiceDataChangeUnsubscribeQueue" />
-			<to uri="jms:queue:ServiceDataChangeUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:ServiceDataChangeUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeServiceDataChangeUnsubscribeMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:ServiceDataChangeUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
+	<bean id="bridgeServiceDataChangeUnsubscribeMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:ServiceDataChangeUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
 
 	<!-- ServiceDataChangeNotify -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:ServiceDataChangeNotifyQueue?selector=subscriberId&lt;&gt;'it.sayservice.domain_changes'" />
-			<to uri="activemq:queue:ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="jms:queue:ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage&amp;selector=subscriberId&lt;&gt;'it.sayservice.domain_changes'" />
+			<to	uri="activemq:queue:ServiceDataChangeNotifyQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" pattern="InOnly" />
 		</route>
 	</camel:camelContext>
-	
+
 	<!-- DomainObjectEventSubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:DomainObjectEventSubscribeQueue" />
-			<to uri="jms:queue:DomainObjectEventSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:DomainObjectEventSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOEventSubscribeMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:DomainObjectEventSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
+	<bean id="bridgeDOEventSubscribeMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DomainObjectEventSubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
 
 	<!-- DomainObjectEventUnsubscribe -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:DomainObjectEventUnsubscribeQueue" />
-			<to uri="jms:queue:DomainObjectEventUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:DomainObjectEventUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOEventUnsubscribeMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:DomainObjectEventUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
-	
+	<bean id="bridgeDOEventUnsubscribeMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DomainObjectEventUnsubscribeQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
 	<!-- DomainObjectUpdate -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:DomainObjectUpdateQueue" />
-			<to uri="activemq:queue:DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
-		</route>
-	</camel:camelContext>
-	
-	<!-- DoOperation -->
-	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="activemq:queue:DoOperationQueue" />
-			<to uri="jms:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="jms:queue:DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="activemq:queue:DomainObjectUpdateQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" pattern="InOnly" />
 		</route>
 	</camel:camelContext>
 
-	<!-- ProcessDoOperationSynch -->
+	<!-- DoOperation -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:DoOperationSyncQueue" />
-			<to uri="jms:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOOperationMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
-	
+	<bean id="bridgeDOOperationMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DoOperationQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
+	<!-- ProcessDoOperationSync -->
+	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from uri="activemq:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOOperationSyncMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to uri="jms:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
+		</route>
+	</camel:camelContext>
+	<bean id="bridgeDOOperationSyncMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DoOperationSyncQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
 	<!-- ProcessDoSearch -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:DoSearchQueue" />
-			<to uri="jms:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from	uri="activemq:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOSearchMessage?method=forwardMessage" pattern="InOut" /> 
+			<!-- <to uri="jms:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
-	
+	<bean id="bridgeDOSearchMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DoSearchQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
 	<!-- ProcessDoDataRequest -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="jms:queue:DoDataRequestQueue" />
-			<to uri="activemq:queue:DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="jms:queue:DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="activemq:queue:DoDataRequestQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" pattern="InOnly" />
 		</route>
 	</camel:camelContext>
 
 	<!-- ProcessDoSignal -->
 	<camel:camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="activemq:queue:DoSignalQueue" />
-			<to uri="jms:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#messageConverter" />
+			<from uri="activemq:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+			<to uri="bean:bridgeDOSignalMessage?method=forwardMessage" pattern="InOut" />
+			<!-- <to	uri="jms:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" /> -->
 		</route>
 	</camel:camelContext>
-	
-	<bean id="messageConverter" class="eu.trentorise.smartcampus.smx.converter.SBOMessageConverter" />
+	<bean id="bridgeDOSignalMessage" class="eu.trentorise.smartcampus.smx.converter.JMSMessageBridge">
+		<property name="serviceEndpoint" value="jms:queue:DoSignalQueue?mapJmsMessage=false&amp;messageConverter=#convertMessage" />
+	</bean>
+
+	<!--  
+	<bean id="messageConverter"
+		class="eu.trentorise.smartcampus.smx.converter.SBOMessageConverter" />
+	-->
+
+	<bean id="convertMessage"
+		class="eu.trentorise.smartcampus.smx.converter.JMSMessageConverter" />
 
 	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
 		<property name="connectionFactory">
@@ -117,7 +160,8 @@
 				<constructor-arg value="false" />
 				<constructor-arg>
 					<bean class="org.hornetq.api.core.TransportConfiguration">
-						<constructor-arg value="org.hornetq.core.remoting.impl.netty.NettyConnectorFactory" />
+						<constructor-arg
+							value="org.hornetq.core.remoting.impl.netty.NettyConnectorFactory" />
 						<constructor-arg>
 							<map key-type="java.lang.String" value-type="java.lang.Object">
 								<entry key="host" value="${hornetQ.discoveryAddress}" />
@@ -130,28 +174,38 @@
 		</property>
 	</bean>
 
-    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="${activeMQ.brokerURL}" />
-    </bean>
-
-    <bean id="amqPooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
-        <property name="maxConnections" value="8" />
-        <property name="maximumActive" value="500" />
-        <property name="connectionFactory" ref="amqConnectionFactory" />
-    </bean>
-
-
-    <bean id="amqConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="amqPooledConnectionFactory"/>
-        <property name="transacted" value="false"/>
-        <property name="concurrentConsumers" value="10"/>
-    </bean>
-
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="configuration" ref="amqConfig"/>
+	<bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="${activeMQ.brokerURL}" />
 	</bean>
 
-	<osgix:cm-properties id="preProps" persistent-id="serviceengine.adapter.properties">
+	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="maxConnections" value="5" />
+		<property name="maximumActive" value="500" />
+		<property name="connectionFactory" ref="amqConnectionFactory" />
+	</bean>
+
+	<!-- <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory"> 
+		<constructor-arg ref="amqConnectionFactory" /> <property name="sessionCacheSize" 
+		value="75" /> <property name="reconnectOnException" value="true"/> <property 
+		name="cacheConsumers" value="false" /> <property name="cacheProducers" value="false" 
+		/> </bean> -->
+
+	<bean id="amqConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="transacted" value="false" />
+		<property name="concurrentConsumers" value="5" />
+		<property name="maxConcurrentConsumers" value="15" />
+		<property name="receiveTimeout" value="500" />
+		<property name="idleTaskExecutionLimit" value="1" />
+		<property name="idleConsumerLimit" value="1" />
+	</bean>
+
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="configuration" ref="amqConfig" />
+	</bean>
+
+	<osgix:cm-properties id="preProps"
+		persistent-id="serviceengine.adapter.properties">
 		<!-- These are the default values. -->
 		<!-- Check serviceengine.adapter.properties.cfg for information -->
 		<prop key="hornetQ.discoveryAddress">localhost</prop>
@@ -159,5 +213,6 @@
 		<prop key="activeMQ.brokerURL">tcp://localhost:61616</prop>
 	</osgix:cm-properties>
 
-	<context:property-placeholder properties-ref="preProps" />
+	<context:property-placeholder
+		properties-ref="preProps" />
 </beans>
