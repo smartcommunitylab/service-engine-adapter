@@ -15,14 +15,17 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.smx.converter;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import eu.trentorise.smartcampus.smx.converter.utils.UtilityBelt;
 
 public class JMSMessageBridge {
 	private static final transient Log logger = LogFactory.getLog(JMSMessageBridge.class);
@@ -37,6 +40,7 @@ public class JMSMessageBridge {
 			logger.info("Message " + message.toString() + " to forward... ---");
 		}
 
+		/*
 		try {
 
 			Random randomGenerator = new Random();
@@ -59,8 +63,23 @@ public class JMSMessageBridge {
 				logger.error("Problems in putting in sleep ---", e);
 			}
 		}
+		*/
 
-		Object responseFromSent = this.producer.sendBody(this.serviceEndpoint, ExchangePattern.InOut, message);
+		Object responseFromSent;
+		try {
+			responseFromSent = this.producer.sendBody(this.serviceEndpoint, ExchangePattern.InOut, message);
+		} catch (CamelExecutionException e) {
+			logger.error("Error forwarding: "+e.getExchange().getException().getMessage());
+			e.printStackTrace();
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put(UtilityBelt.SECURITY_TOKEN, message.get(UtilityBelt.SECURITY_TOKEN));
+			result.put(UtilityBelt.RESPONSE_TYPE, "ERROR");
+			result.put(UtilityBelt.RESPONSE_MESSAGE, message.get(UtilityBelt.RESPONSE_MESSAGE));
+			result.put(UtilityBelt.SUBSCRIBER_ID, message.get(UtilityBelt.SUBSCRIBER_ID));
+			result.put(UtilityBelt.SUBSCRIPTION_ID, message.get(UtilityBelt.SUBSCRIPTION_ID));
+			result.put(UtilityBelt.CONVERSATION_ID, message.get(UtilityBelt.CONVERSATION_ID));
+			return result;
+		}
 		if (responseFromSent instanceof Map<?, ?>) {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> response = (Map<String, Object>) responseFromSent;

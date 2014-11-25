@@ -56,9 +56,9 @@ public class JMSMessageConverter implements MessageConverter {
 		String subscriptionId = null;
 		String conversationId = null;
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 
-			logger.info("Called toMessage method for" + object.toString() + " in session " + session.toString() + "... ---");
+			logger.debug("Called toMessage method for" + object.toString() + " in session " + session.toString() + "... ---");
 		}
 
 		if (object instanceof Map<?, ?>) {
@@ -85,7 +85,9 @@ public class JMSMessageConverter implements MessageConverter {
 			conversationId = (String) map.get(UtilityBelt.CONVERSATION_ID);
 
 			byte[] content = (byte[]) map.get(UtilityBelt.CONTENT);
-			streamMessage.writeBytes(content);
+			if (content != null) {
+				streamMessage.writeBytes(content);
+			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug(UtilityBelt.SECURITY_TOKEN + ", " +
@@ -133,9 +135,9 @@ public class JMSMessageConverter implements MessageConverter {
 			message.setStringProperty("conversationId", conversationId);
 		}
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isDebugEnabled()) {
 
-			logger.info("Message " + message.toString() + " constructed... ---");
+			logger.debug("Message " + message.toString() + " constructed... ---");
 		}
 
 		return message;
